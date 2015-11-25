@@ -10,8 +10,34 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 double degree[5];
 double odegree[5];
+/*
+ * 产生一个随机数
+ */
+float randf(){
+	return ((float)(rand()%1001))*(0.001f);
+}
+int getLqi(int power){
+	int mid = 50+2*power-5;
+	int a,b;
+	if(randf()>0.1){
+		a = mid-5;
+		b = mid+5;
+	}
+	else{
+		if(randf()>0.5){
+			a = 50;
+			b = 60;
+		}
+		else{
+			a = mid+5;
+			b = 110;
+		}
+	}
+	return rand()%(b-a)+a;
+}
 double getLi(int a,int b,int lqi)
 {
     int  c = (a+b)/2;
@@ -175,13 +201,13 @@ int fuzzyChangePower(int lqi,int oldlqi,int power)
     for(j=0;j<2;j++){
         if(x[j]==16)
         {
-            BStep += degree[4]*10;
+            BStep += -degree[4]*10;
             sum += degree[4];
             flag = 0;
         }
         else if(x[j]==1)
         {
-            BStep = degree[0]*10;
+            BStep += degree[0]*10;
             sum += degree[0];
         }
         else if(x[j]==4){
@@ -196,7 +222,7 @@ int fuzzyChangePower(int lqi,int oldlqi,int power)
                     TStep += min*2;
                 }
                 else{
-                    SStep += min*5;
+                    SStep += -min*5;
                 }
                 sum += min;
             }
@@ -243,14 +269,15 @@ int fuzzyChangePower(int lqi,int oldlqi,int power)
         adj = (BStep+SStep+TStep)/sum;
     printf("sum = %lf\n",sum);
     printf("adj = %lf\n",adj);
-    if(flag)
-        power = power+adj;
-    else
-        power = power-adj;
-    return power;
+
+    return power+adj;
 }
 int main(void) {
-	int newpower = fuzzyChangePower(88,110,10);
-	printf("after fuzzy control new power is%d\n",newpower);
+//	int newpower = fuzzyChangePower(95,110,25);
+//	printf("after fuzzy control new power is%d\n",newpower);
+	int i = 1;
+	for(;i<31;i++){
+		printf("功率为%d产生LQI为%d\n",i,getLqi(i));
+	}
 	return EXIT_SUCCESS;
 }
