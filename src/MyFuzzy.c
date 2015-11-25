@@ -15,10 +15,14 @@ double odegree[5];
 double getLi(int a,int b,int lqi)
 {
     int  c = (a+b)/2;
-    if(lqi<c)
-        return ((double)(lqi-a))/((double)(c-a));
-    if(lqi>=c)
-        return ((double)(lqi-c))/((double)(b-c));
+    double result;
+    if(lqi<c){
+    	result = ((double)(lqi-a))/((double)(c-a));
+    }
+    if(lqi>=c){
+    	result = ((double)(b-lqi))/((double)(b-c));
+    }
+    return result;
 }
 void initialDegree()
 {
@@ -33,48 +37,60 @@ int fuzzy(int lqi,int id)
 {
 //    bool *list = new bool[5];
     int res = 0;
-    if(lqi>=50&&lqi<=80){
+    if(lqi>=50&&lqi<=70){
         res += 1;
         if(id)
-            odegree[0] = getLi(50,80,lqi);
+        	odegree[0] = ((double)(70-lqi))/((double)20);
         else
-            degree[0] = getLi(50,80,lqi);
+        	degree[0] = ((double)(70-lqi))/((double)20);
     }
-    if(lqi>=75&&lqi<=87){
+    if(lqi>=60&&lqi<=80){
         res += 2;
         if(id)
-            odegree[1] = getLi(75,87,lqi);
+            odegree[1] = getLi(60,80,lqi);
         else
-            degree[1] = getLi(75,87,lqi);
+            degree[1] = getLi(60,80,lqi);
     }
-    if(lqi>=85&&lqi<=95){
+    if(lqi>=70&&lqi<=90){
         res += 4;
         if(id)
-            odegree[2] = getLi(85,95,lqi);
+            odegree[2] = getLi(70,90,lqi);
         else
-            degree[2] = getLi(85,95,lqi);
+            degree[2] = getLi(70,90,lqi);
     }
-    if(lqi>=93&&lqi<=102){
+    if(lqi>=80&&lqi<=100){
         res += 8;
         if(id)
-            odegree[3] = getLi(93,102,lqi);
+            odegree[3] = getLi(80,100,lqi);
         else
-            degree[3] = getLi(93,102,lqi);
+            degree[3] = getLi(80,100,lqi);
     }
-    if(lqi>=100&&lqi<=110){
+    if(lqi>=90&&lqi<=110){
         res += 16;
         if(id)
-            odegree[4] = getLi(100,110,lqi);
+        	odegree[4] = ((double)(lqi-90))/((double)20);
         else
-            degree[4] = getLi(100,110,lqi);
+        	degree[4] = ((double)(lqi-90))/((double)20);
     }
     return res;
+}
+int countPower(int num){
+	int count = 0;
+	while(num!=1){
+		num = num/2;
+		count++;
+	}
+	return count;
 }
 int fuzzyChangePower(int lqi,int oldlqi,int power)
 {
     initialDegree();
     int list = fuzzy(lqi,0);
     int olist = fuzzy(oldlqi,1);
+    int k=0;
+    for(;k<5;k++)
+    	printf("degree[%d]=%lf.",k,degree[k]);
+    puts("");
     //得到之前lqi的模糊值和当前lqi的模糊值
     int *x = malloc(sizeof(int)*2);
     x[0] = 0;
@@ -175,7 +191,7 @@ int fuzzyChangePower(int lqi,int oldlqi,int power)
         else if(x[j]==8)
         {
             if(y[0]!=0){
-                double min = degree[3]<odegree[y[0]/2]?degree[3]:odegree[y[0]/2];
+                double min = degree[3]<odegree[countPower(y[0])]?degree[3]:odegree[countPower(y[0])];
                 if(y[0]<8){
                     TStep += min*2;
                 }
@@ -185,7 +201,7 @@ int fuzzyChangePower(int lqi,int oldlqi,int power)
                 sum += min;
             }
             if(y[1]!=0){
-                double min = degree[3]<odegree[y[1]/2]?degree[3]:odegree[y[1]/2];
+                double min = degree[3]<odegree[countPower(y[1])]?degree[3]:odegree[countPower(y[1])];
                 if(y[1]<8){
                     TStep += min*2;
                 }
@@ -197,7 +213,7 @@ int fuzzyChangePower(int lqi,int oldlqi,int power)
         }
         else if(x[j]==2){
             if(y[0]!=0){
-                double min = degree[1]<odegree[y[0]/2]?degree[1]:odegree[y[0]/2];
+                double min = degree[1]<odegree[countPower(y[0])]?degree[1]:odegree[countPower(y[0])];
                 if(y[0]<4)
                 {
                     SStep += min*5;
@@ -210,7 +226,7 @@ int fuzzyChangePower(int lqi,int oldlqi,int power)
             }
             if(y[1]!=0)
             {
-                double min = degree[1]<odegree[y[1]/2]?degree[1]:odegree[y[1]/2];
+                double min = degree[1]<odegree[countPower(y[1])]?degree[1]:odegree[countPower(y[1])];
                 if(y[1]<4)
                     SStep += min*5;
                 else
@@ -230,11 +246,11 @@ int fuzzyChangePower(int lqi,int oldlqi,int power)
     if(flag)
         power = power+adj;
     else
-        power=  power-adj;
+        power = power-adj;
     return power;
 }
 int main(void) {
-	int newpower = fuzzyChangePower(70,110,10);
+	int newpower = fuzzyChangePower(88,110,10);
 	printf("after fuzzy control new power is%d\n",newpower);
 	return EXIT_SUCCESS;
 }
