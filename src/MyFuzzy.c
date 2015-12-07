@@ -12,16 +12,17 @@
 #include <stdlib.h>
 #include <math.h>
 #define PI 3.1415926
+#define O 1
 double degree[5];
 double odegree[5];
 //高斯分布
 double Gaussian_distribution(double u, double o, double x) {
 	//正态分布公式钱的系数
-	double k = 1.0 / (sqrt(2 * PI) * o);
+	double k = 1.0 / (sqrt(2 * PI) * O);
 	//正态分布的幂数
-	double min = pow(x - u, 2) / (-2.0 * o * o);
+	double min = pow(x - u, 2) / (-2.0 * O * O);
 
-	return k * exp(min);
+	return exp(min);
 }
 /*
  * 产生一个随机数
@@ -272,18 +273,68 @@ int fuzzyChangePower(int lqi, int oldlqi, int power) {
 }
 int main(void) {
 	/*int newpower = fuzzyChangePower(95,110,25);
-	printf("after fuzzy control new power is%d\n",newpower);*/
+	 printf("after fuzzy control new power is%d\n",newpower);*/
 	int power = 30;
-	int lqi;
 	int oldlqi = 110;
 	int i = 0;
-	for(;i<200;i++){
-		lqi = getLqi(power);
-		int t = fuzzyChangePower(lqi,oldlqi,power);
-		power = t;
-		printf("the lqi is %d,the oldlqi is %d\n",lqi,oldlqi);
-		printf("after fuzzy control new power is%d\n",power);
-		oldlqi = lqi;
+	/*	for(;i<200;i++){
+	 lqi = getLqi(power);
+	 int t = fuzzyChangePower(lqi,oldlqi,power);
+	 power = t;
+	 printf("the lqi is %d,the oldlqi is %d\n",lqi,oldlqi);
+	 printf("after fuzzy control new power is%d\n",power);
+	 oldlqi = lqi;
+	 }*/
+	double ans;
+	double t;
+	ans = Gaussian_distribution(80.0, 10.0 / 3, (double) 80);
+	for (i = 50; i <= 65; i++) {
+		if (i >= 50 && i <= 65) {
+			ans = ((double) (65 - i)) / ((double) 15);
+		}
+		printf("%d\t%lf\n", i, ans);
+	}
+	for (i = 60; i <= 80; i++) {
+		if (i > 70)
+			t = 70 + (i - 70) * 3.0 / 10.0;
+		if (i < 70)
+			t = 70 - (70 - i) * 3.0 / 10.0;
+		if(i==70)
+			t = i;
+		if (i >= 60 && i <= 80) {
+			ans = Gaussian_distribution(70.0, 10.0 / 3, t);
+		}
+		printf("%d\t%lf\n", i, ans);
+	}
+	for (i = 70; i <= 90; i++) {
+		if (i >= 70 && i <= 90) {
+			if (i > 80)
+				t = 80 + (i - 80) * 3.0 / 10.0;
+			if (i < 80)
+				t = 80 - (80 - i) * 3.0 / 10.0;
+			if(i==80)
+					t = i;
+			ans = Gaussian_distribution(80.0, 10.0 / 3, t);
+		}
+		printf("%d\t%lf\n", i, ans);
+	}
+	for (i = 80; i <= 100; i++) {
+		if (i > 90)
+			t = 90 + (i - 90) * 3.0 / 10.0;
+		if (i < 90)
+			t = 90 - (90 - i) * 3.0 / 10.0;
+		if(i==90)
+			t = i;
+		if (i >= 80 && i <= 100) {
+			ans = Gaussian_distribution(90.0, 10.0 / 3, t);
+		}
+		printf("%d\t%lf\n", i, ans);
+	}
+	for (i = 95; i <= 110; i++) {
+		if (i >= 95 && i <= 110) {
+			ans = ((double) (i - 95)) / ((double) 15);
+		}
+		printf("%d\t%lf\n", i, ans);
 	}
 	return EXIT_SUCCESS;
 }
