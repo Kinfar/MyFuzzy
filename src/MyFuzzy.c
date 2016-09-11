@@ -336,5 +336,5 @@ int main(void) {
 		}
 		printf("%d\t%lf\n", i, ans);
 	}
-	return EXIT_SUCCESS;
+	return 0;
 }
